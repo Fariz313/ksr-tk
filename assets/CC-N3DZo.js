@@ -1,0 +1,1 @@
+import{_ as t,x as s,K as o,v as n}from"./BrKE15L_.js";const r={mounted(){initFlowbite()}},c={class:"h-screen"};function a(e,l,_,d,i,p){return n(),s("div",c,[o(e.$slots,"default")])}const u=t(r,[["render",a]]);export{u as default};

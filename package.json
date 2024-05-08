@@ -8,12 +8,14 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@nuxt/http": "^0.6.4",
     "@vite-pwa/nuxt": "^0.7.0",
     "flowbite": "^2.3.0",
+    "gh-pages": "^6.1.1",
     "nuxt": "^3.11.2",
     "objection": "^3.1.4",
     "sqlite3": "^5.1.7",

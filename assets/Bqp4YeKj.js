@@ -1,1 +1,0 @@
-import{_ as s,c as o,z as t,o as c}from"./D4wATeQG.js";const r={mounted(){}},n={class:"h-screen"};function a(e,_,d,l,p,f){return c(),o("div",n,[t(e.$slots,"default")])}const u=s(r,[["render",a]]);export{u as default};

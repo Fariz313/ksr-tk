@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuxtPwaManifest />
+    <!-- <NuxtPwaManifest /> -->
     <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />

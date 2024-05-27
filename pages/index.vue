@@ -67,9 +67,8 @@
     </div>
 </template>
 <script>
-// import sqlite3 from 'sqlite3'
-
-import { initFlowbite } from 'flowbite';
+import nuxtStorage from 'nuxt-storage';
+import Swal from 'sweetalert2'
 definePageMeta({
     layout: 'clear'
 })
@@ -83,28 +82,33 @@ export default {
     },
     methods: {
         login() {
-            if (this.email == "email@mail.com" && this.password == "password") {
-                this.$router.push("/dashboard")
+            const users = nuxtStorage.localStorage.getData('users')
+            const user = users.find(user => (user.email === this.email && user.password === this.password));
+            console.log("log login", user);
+            if (user) {
+                nuxtStorage.localStorage.setData('logged_user', user,9999,"d")
+                this.$router.push("/product")
             } else {
-                this.failLogin = true
+                Swal.fire({
+                    title: 'Not Valid!',
+                    text: 'Email atau Password salah',
+                    icon: 'error',
+                    confirmButtonText: 'Cool'
+                })
             }
-            const db = new sqlite3.Database('~/database/database.db', sqlite3.OPEN_READWRITE, (err) => {
-                if (err) return console.error(err.message)
-            })
-            let sql = "SELECT * FROM user WHERE email='" + this.email + "' AND password=" + this.password
-            db.all(sql, [], (err, rows) => {
-                if (err) {
-                    this.failLogin = true
-                } else {
-                    rows.forEach(row => {
-                        this.$router.push("/dashboard")
-                    });
-                    this.failLogin = true
-                }
-            })
         },
     },
-    mounted() {
+    async mounted() {
+        console.log("Check User");
+        let users = nuxtStorage.localStorage.getData('users')
+        if (!users) {
+            let insertUser = [{
+                email: "email@mail.mail",
+                password: "password"
+            }]
+            nuxtStorage.localStorage.setData('users', insertUser,9999,'d')
+            console.log(insertUser);
+        }
     }
 }
 </script>

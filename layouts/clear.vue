@@ -8,7 +8,6 @@ import Navbar from '../components/navbar.vue';
 <script>
 export default{
     mounted() {
-        initFlowbite();
     }
 }
 </script>

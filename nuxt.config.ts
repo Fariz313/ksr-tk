@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     // 'nuxt-electron',
   ],
   plugins: [
-    // '~/plugins/db.js'
+    '~/plugins/commafy.js'
   ],
   // electron: {
   //   build: [

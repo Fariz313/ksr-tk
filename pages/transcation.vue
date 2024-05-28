@@ -14,10 +14,10 @@
         <!-- Main modal -->
         <div id="crud-modal" tabindex="-1" aria-hidden="true"
             class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="relative p-4 w-full max-w-lg max-h-full">
+            <div class="relative p-4 w-full max-w-xl max-h-full">
                 <!-- Modal content -->
                 <FormTransaction v-if="renderComponent" :title="formTitle" :target="formTarget" :item="formTargetItem"
-                    @submit-transaction="(d) => formTransaksi(d)" @close-modal="closeModal" />
+                    :products="products" @submit-transaction="(d) => formTransaksi(d)" @close-modal="closeModal" />
             </div>
         </div>
 
@@ -35,19 +35,19 @@
                             </div>
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Nama Transaksi
+                            Nomor Nota
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Kode Transaksi
+                            Nama Customer
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Barcode
+                            Nama Penerima
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Kategori
+                            Barang
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Harga
+                            Total
                         </th>
                         <th scope="col" class="px-6 py-3">
 
@@ -64,25 +64,31 @@
                                 <label for="checkbox-table-1" class="sr-only">checkbox</label>
                             </div>
                         </td>
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ item.name }}
-                        </th>
-                        <td class="px-6 py-4">
-                            {{ item.code }}
+                        <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ item.nota }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.category }}
+                            {{ item.customer }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ item.price }}
+                            {{ item.reciver }}
                         </td>
                         <td class="px-6 py-4">
-                            <button type="button" @click="openFormEditTransaction(item)"
-                                class="text-blue-400 bg-transparent ms-4">
-                                EDIT
+                            <ul>
+                                <li v-for="itm,idx in item.items">
+                                    {{ itm.item.name }} (Rp.{{$commafy(itm.price)}})
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="px-6 py-4">
+                            Rp.{{ $commafy(item.total) }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <button type="button" @click="exportKwitansi(item.id)" class="text-white py-2 px-3 bg-green-400 ms-4">
+                                Export Kwitansi
                             </button>
-                            <button type="button" @click="removeData(item.id)" class="text-red-400 bg-transparent ms-4">
-                                DELETE
+                            <button type="button" @click="exportSJ(item.id)" class="text-white py-2 px-3 bg-green-400 ms-4">
+                                Export Surat jalan
                             </button>
                         </td>
                     </tr>
@@ -100,6 +106,7 @@ export default {
     data() {
         return {
             transactions: [],
+            products: [],
             formTarget: 'create',
             formTargetItem: {},
             formTitle: 'Buat Transaksi Baru',
@@ -116,7 +123,8 @@ export default {
         fetchData() {
             let transactions = nuxtStorage.localStorage.getData('transactions');
             this.transactions = transactions;
-            console.log(this.transactions);
+            let products = nuxtStorage.localStorage.getData('products');
+            this.products = products;
         },
         async openFormAddTransaction() {
             console.log('add');

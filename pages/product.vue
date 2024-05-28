@@ -50,6 +50,9 @@
                             Harga
                         </th>
                         <th scope="col" class="px-6 py-3">
+                            Stock
+                        </th>
+                        <th scope="col" class="px-6 py-3">
 
                         </th>
                     </tr>
@@ -71,14 +74,24 @@
                             {{ item.code }}
                         </td>
                         <td class="px-6 py-4">
+                            {{ item.barcode }}
+                        </td>
+                        <td class="px-6 py-4">
                             {{ item.category }}
                         </td>
                         <td class="px-6 py-4">
                             {{ item.price }}
                         </td>
                         <td class="px-6 py-4">
+                            {{ item.category }}
+                        </td>
+                        <td class="px-6 py-4">
                             <button type="button" @click="openFormEditProduct(item)"
                                 class="text-blue-400 bg-transparent ms-4">
+                                STOCK
+                            </button>
+                            <button type="button" @click="openFormEditProduct(item)"
+                                class="text-yellow-400 bg-transparent ms-4">
                                 EDIT
                             </button>
                             <button type="button" @click="removeData(item.id)" class="text-red-400 bg-transparent ms-4">
@@ -116,7 +129,6 @@ export default {
         fetchData() {
             let products = nuxtStorage.localStorage.getData('products');
             this.products = products;
-            console.log(this.products);
         },
         async openFormAddProduct() {
             console.log('add');

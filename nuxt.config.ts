@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
-    baseURL: '/ksr-tk/', // baseURL: '/<repository>/'
+    baseURL: '/bengkel/', // baseURL: '/<repository>/'
     buildAssetsDir: 'assets', // don't use "_" at the begining of the folder name to avoids nojkill conflict
   },
   devtools: { enabled: true },
@@ -12,7 +12,8 @@ export default defineNuxtConfig({
     // 'nuxt-electron',
   ],
   plugins: [
-    '~/plugins/commafy.js'
+    '~/plugins/commafy.js',
+    {src:'~/plugins/indexdb.js',mode:'client'}
   ],
   // electron: {
   //   build: [

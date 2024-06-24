@@ -69,6 +69,7 @@
 <script>
 import nuxtStorage from 'nuxt-storage';
 import Swal from 'sweetalert2'
+
 definePageMeta({
     layout: 'clear'
 })
@@ -81,34 +82,93 @@ export default {
         }
     },
     methods: {
-        login() {
-            const users = nuxtStorage.localStorage.getData('users')
-            const user = users.find(user => (user.email === this.email && user.password === this.password));
-            console.log("log login", user);
-            if (user) {
-                nuxtStorage.localStorage.setData('logged_user', user,9999,"d")
-                this.$router.push("/product")
-            } else {
+        async login() {
+            const email = this.email
+            const password = this.password
+            const db = await this.$indexdb;
+            let transaction = db.transaction(["users"], "readonly");
+            let objectStore = transaction.objectStore("users");
+            let index = objectStore.index("email");
+            let request = index.get(email);
+            request.onsuccess = async (event) =>{
+                let user = request.result;
+                const decrypted = await this.decryptor(user.password);
+                console.log("log login", user);
+                if (user && decrypted === password) {
+                    this.$router.push("/product");
+                } else {
+                    Swal.fire({
+                        title: 'Not Valid!',
+                        text: 'Email atau Password salah',
+                        icon: 'error',
+                        confirmButtonText: 'Cool'
+                    });
+                }
+            };
+
+            request.onerror = function (event) {
+                console.error("Error fetching user: " + event.target.errorCode);
                 Swal.fire({
-                    title: 'Not Valid!',
-                    text: 'Email atau Password salah',
+                    title: 'Error!',
+                    text: 'An error occurred while fetching user data',
                     icon: 'error',
                     confirmButtonText: 'Cool'
-                })
+                });
+            };
+        },
+        async checkAndCreateUser() {
+            const default_password = this.$simpleCrypto.encrypt('password');
+            try {
+                const db = await this.$indexdb;
+                const transaction = db.transaction(["users"]);
+                const objectStore = transaction.objectStore("users");
+                const request = objectStore.getAll();
+                request.onsuccess = function (event) {
+                    if (request.result) {
+                        if (request.result.length < 1) {
+                            console.log("lets create users");
+                            const transaction2 = db.transaction(["users"], "readwrite");
+                            const objectStore2 = transaction2.objectStore("users");
+                            const customer = { id: 1, name: "Admin", email: "email@mail.mail", password: default_password };
+                            const request2 = objectStore2.add(customer);
+
+                            request2.onsuccess = function (event2) {
+                                console.log("User added");
+                            };
+
+                            request.onerror = function (event) {
+                                console.log("Add customer error: " + event.target.errorCode);
+                            };
+                        }
+                    } else {
+                        console.log("No users found ");
+                        const transaction2 = db.transaction(["users"], "readwrite");
+                        const objectStore2 = transaction2.objectStore("users");
+                        const default_password = this.$simpleCrypto.encrypt('plainText');
+                        const customer = { id: 1, name: "Admin", email: "email@mail.mail", password: default_password };
+                        const request2 = objectStore2.add(customer);
+
+                        request2.onsuccess = function (event2) {
+                            console.log("User added");
+                        };
+
+                        request.onerror = function (event) {
+                            console.log("Add customer error: " + event.target.errorCode);
+                        };
+                    }
+                };
+            } catch (error) {
+                console.log(error);
             }
         },
+        async decryptor(encrypt) {
+            let decrypt = await this.$simpleCrypto.decrypt(encrypt)
+            return decrypt;
+
+        }
     },
     async mounted() {
-        console.log("Check User");
-        let users = nuxtStorage.localStorage.getData('users')
-        if (!users) {
-            let insertUser = [{
-                email: "email@mail.mail",
-                password: "password"
-            }]
-            nuxtStorage.localStorage.setData('users', insertUser,9999,'d')
-            console.log(insertUser);
-        }
+        this.checkAndCreateUser()
     }
 }
 </script>

@@ -3,7 +3,7 @@
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                {{title}} Barang Baru
+                {{ title }} Barang Baru
             </h3>
             <button @click="$emit('closeModal')" type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -29,7 +29,7 @@
                 <div class="col-span-2">
                     <label for="code" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kode
                         Produk</label>
-                    <input v-model="form.code" type="text" name="code" id="code"
+                    <input v-model="form.code" type="text" name="code" id="code" disabled
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Masukan Kode Produk" required>
                 </div>
@@ -93,13 +93,33 @@ export default {
         }
     },
     methods: {
+        async getLastData() {
+            const db = await this.$indexdb;
+            const transaction = db.transaction(['products'], 'readonly');
+            const objectStore = transaction.objectStore('products');
+            const request = objectStore.openCursor(null, 'prev');
+
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    console.log(cursor);
+                    this.form.code = cursor.value.code + 1
+                } else {
+                    this.form.code = 1
+                }
+            };
+
+            request.onerror = function (event) {
+                console.log(event.target.error);
+            };
+        },
         submitEmiting() {
             this.$emit('submitProduct', this.form)
         }
     },
-    mounted(){
+    mounted() {
         console.log('opened');
-        if(this.target != 'create'){
+        if (this.target != 'create') {
             console.log(this.item);
             this.form.name = this.item.name
             this.form.code = this.item.code
@@ -107,6 +127,8 @@ export default {
             this.form.price = this.item.price
             this.form.barcode = this.item.barcode
             this.form.stock = this.item.stock
+        } else {
+            this.getLastData()
         }
     }
 }

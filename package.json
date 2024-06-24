@@ -23,6 +23,7 @@
     "flowbite": "^2.3.0",
     "gh-pages": "^6.1.1",
     "md5": "^2.3.0",
+    "moment": "^2.30.1",
     "nuxt": "^3.11.2",
     "nuxt-storage": "^1.2.2",
     "objection": "^3.1.4",

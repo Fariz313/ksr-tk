@@ -93,8 +93,8 @@ export default {
             request.onsuccess = async (event) =>{
                 let user = request.result;
                 const decrypted = await this.decryptor(user.password);
-                console.log("log login", user);
                 if (user && decrypted === password) {
+                    nuxtStorage.localStorage.setData('loggin', user, 24, 'h')
                     this.$router.push("/product");
                 } else {
                     Swal.fire({
@@ -158,7 +158,7 @@ export default {
                     }
                 };
             } catch (error) {
-                console.log(error);
+                console.log('error',error);
             }
         },
         async decryptor(encrypt) {

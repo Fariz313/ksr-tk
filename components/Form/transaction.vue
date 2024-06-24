@@ -29,7 +29,7 @@
                 <div class="col-span-2">
                     <label for="nota" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">No
                         Nota</label>
-                    <input v-model="form.nota" type="number" name="nota" id="nota"
+                    <input v-model="form.nota" type="text" name="nota" id="nota" disabled
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         placeholder="Masukan Nomor Nota" required>
                 </div>
@@ -98,7 +98,7 @@ export default {
             transactions: [],
             form: {
                 customer: "",
-                nota: "",
+                nota: "VI/2024/1",
                 total: "",
                 reciver: "",
                 items: [{
@@ -140,8 +140,6 @@ export default {
         }
     },
     mounted() {
-        console.log('opened');
-        console.log(this.products);
         if (this.target != 'create') {
             console.log(this.item);
             this.form.customer = this.item.customer
@@ -149,6 +147,7 @@ export default {
             this.form.total = this.item.total
             this.form.reciver = this.item.reciver
             this.form.items = this.item.items
+        }else{
         }
     }
 }

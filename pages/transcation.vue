@@ -120,11 +120,27 @@ export default {
             await this.$nextTick();
             this.renderComponent = true;
         },
-        fetchData() {
-            let transactions = nuxtStorage.localStorage.getData('transactions');
-            this.transactions = transactions;
-            let products = nuxtStorage.localStorage.getData('products');
-            this.products = products;
+        async fetchDataProduct() {
+            const db = await this.$indexdb;
+            const transaction = db.transaction(["products"]);
+            const objectStore = transaction.objectStore("products");
+            const request = objectStore.getAll();
+            request.onsuccess = (event) => {
+                let products = request.result
+                this.products = products;
+                console.log('p',this.products);
+            }
+        },
+        async fetchData(){
+            await this.fetchDataProduct()
+            const db = await this.$indexdb;
+            const transaction = db.transaction(["transactions"]);
+            const objectStore = transaction.objectStore("transactions");
+            const request = objectStore.getAll();
+            request.onsuccess = (event) => {
+                let transaction = request.result
+                this.transactions = transaction;
+            }
         },
         async openFormAddTransaction() {
             console.log('add');
@@ -180,6 +196,10 @@ export default {
         }
     },
     mounted() {
+        let loggin = nuxtStorage.localStorage.getData('loggin');
+        if(!loggin){
+            this.$router.push("/");
+        }
         this.fetchData();
     }
 }

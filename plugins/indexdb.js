@@ -40,6 +40,7 @@ export default defineNuxtPlugin(() => {
         objectStore.createIndex("total", "total", { unique: false });
         objectStore.createIndex("reciver", "reciver", { unique: false });
         objectStore.createIndex("items", "items", { unique: false });
+        objectStore.createIndex("created_at", "created_at", { unique: false });
         console.log("Object store and indexes created");
       }
     };
